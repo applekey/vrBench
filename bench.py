@@ -59,7 +59,7 @@ print fullPath
 #####################################################################################################
 config = vrconfig()
 config.dataset = 'enzo'
-config.iterations = 2
+config.iterations = 5
 config.filterStep ='Sample      RUNTIME: '
 config.programArgs=' '
 config.dateTestRun = unicode(datetime.datetime.now().replace(microsecond=0))
@@ -67,19 +67,34 @@ config.fullPath = fullPath
 config.resultFile = fullPathResult
 #####################################################################################################
 
-os.environ["OMP_SCHEDULE"] = "dynamic"
-config.schedule = 'dynamic'
-runTest(config)
+# os.environ["OMP_SCHEDULE"] = "dynamic"
+# config.schedule = 'dynamic'
+# runTest(config)
 
-os.environ["OMP_SCHEDULE"] = "static"
-config.schedule = 'static'
-runTest(config)
+# os.environ["OMP_SCHEDULE"] = "static"
+# config.schedule = 'static'
+# runTest(config)
 
-os.environ["OMP_SCHEDULE"] = "guided"
-config.schedule = 'guided'
-runTest(config)
+# os.environ["OMP_SCHEDULE"] = "guided"
+# config.schedule = 'guided'
+# runTest(config)
 
-os.environ["OMP_SCHEDULE"] = "auto"
-config.schedule = 'auto'
-runTest(config)
+# os.environ["OMP_SCHEDULE"] = "auto"
+# config.schedule = 'auto'
+# runTest(config)
+
+## try static different sizes
+blockStart = 0
+blockEnd = 1000
+stepSize = 100
+
+curSize = blockStart
+while curSize<blockEnd:
+
+    os.environ["OMP_SCHEDULE"] = "static , " + str(curSize)
+    config.schedule = 'auto' + str(curSize)
+    runTest(config)
+
+    curSize += stepSize
+
 
