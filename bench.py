@@ -1,4 +1,4 @@
-import subprocess,os,io,csv,datetime
+import subprocess,os,io,csv,datetime,sys
 
 class vrconfig:
     def __init__(self):
@@ -12,12 +12,17 @@ class vrconfig:
         self.programArgs=' '
         self.resultFile = ' '
         self.fullPath = ' '
+        self.cores = 0
 
 def runTest(config):
 
     totalRunTime = 0
     for i in range(config.iterations):  
-        runOutput = subprocess.check_output([config.fullPath, config.programArgs])
+        runArgs = [config.fullPath]
+        runArgs +=config.programArgs
+        #print runArgs
+
+        runOutput = subprocess.check_output(runArgs)
         location = runOutput.find(config.filterStep)
 
         if location == -1:
@@ -41,7 +46,7 @@ def runTest(config):
 
 def recordResult(config,totalRunTime):
     c = config
-    line = [c.dataset, c.iterations, c.schedule, c.blocksize, totalRunTime,c.dateTestRun,c.programArgs]
+    line = [c.dataset, c.iterations, c.schedule, c.cores, c.blocksize, totalRunTime,c.dateTestRun,c.programArgs]
     print line
     with open(c.resultFile, 'a') as file:
         ww = csv.writer(file, delimiter=',')
@@ -59,40 +64,71 @@ print fullPath
 #####################################################################################################
 config = vrconfig()
 config.dataset = 'enzo'
-config.iterations = 5
+config.iterations = 3
 config.filterStep ='Sample      RUNTIME: '
 config.programArgs=' '
 config.dateTestRun = unicode(datetime.datetime.now().replace(microsecond=0))
 config.fullPath = fullPath
 config.resultFile = fullPathResult
+
 #####################################################################################################
 
-config.programArgs = "OMP_SCHEDULE=dynamic"
-config.schedule = 'dynamic'
-runTest(config)
+# case 1:
+#     omp_set_schedule(omp_sched_static, atoi(argv[3]));
+#     break;
+# case 2:
+#     omp_set_schedule(omp_sched_auto, atoi(argv[3]));
+#     break;
+# case 3:
+#     omp_set_schedule(omp_sched_dynamic, atoi(argv[3]));
+#     break;
+# case 4:
+#     omp_set_schedule(omp_sched_guided, atoi(argv[3]));
+#     break;
 
-config.programArgs = "OMP_SCHEDULE=static"
-config.schedule = 'static'
-runTest(config)
+for i in range(1,16+1):
+    config.cores = i
+    config.schedule = 1
+    config.programArgs = [str(config.cores),str(config.schedule),str(config.blocksize)]
+    config.schedule = 'static'
+    runTest(config)
 
-config.programArgs = "OMP_SCHEDULE=guided"
-config.schedule = 'guided'
-runTest(config)
+for i in range(1,16+1):
+    config.cores = i
+    config.schedule = 3
+    config.programArgs = [str(config.cores),str(config.schedule),str(config.blocksize)]
+    config.schedule = 'dynamic'
+    runTest(config)
 
-config.programArgs = "OMP_SCHEDULE=auto"
-config.schedule = 'auto'
-runTest(config)
+for i in range(1,16+1):
+    config.cores = i
+    config.schedule = 4
+    config.programArgs = [str(config.cores),str(config.schedule),str(config.blocksize)]
+    config.schedule = 'guided'
+    runTest(config)
+
+for i in range(1,16+1):
+    config.cores = i
+    config.schedule = 2
+    config.programArgs = [str(config.cores),str(config.schedule),str(config.blocksize)]
+    config.schedule = 'auto'
+    runTest(config)
+
+sys.exit() ## stop here
 
 ## try static different sizes
+
+config.cores = 16 ##use 16 threads
+
 blockStart = 0
 blockEnd = 10000
 stepSize = 1000
 
 curSize = blockStart
 while curSize<blockEnd:
-
-    config.programArgs = "OMP_SCHEDULE=static,"+str(curSize)
-    #os.environ["OMP_SCHEDULE"] = "static , " + str(curSize)
+    config.schedule = 1
+    config.blocksize = str(curSize)
+    config.programArgs = [str(config.cores),str(config.schedule),str(config.blocksize)]
     config.schedule = 'static' + str(curSize)
     runTest(config)
 
@@ -104,9 +140,9 @@ stepSize = 1000
 
 curSize = blockStart
 while curSize<blockEnd:
-
-    config.programArgs = "OMP_SCHEDULE=dynamic,"+str(curSize)
-    #os.environ["OMP_SCHEDULE"] = "dynamic , " + str(curSize)
+    config.schedule = 3
+    config.blocksize = str(curSize)
+    config.programArgs = [str(config.cores),str(config.schedule),str(config.blocksize)]
     config.schedule = 'dynamic' + str(curSize)
     runTest(config)
 
