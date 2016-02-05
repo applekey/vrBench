@@ -66,6 +66,20 @@ config.dateTestRun = unicode(datetime.datetime.now().replace(microsecond=0))
 config.fullPath = fullPath
 config.resultFile = fullPathResult
 #####################################################################################################
+
+os.environ["OMP_SCHEDULE"] = "dynamic"
+config.schedule = 'dynamic'
 runTest(config)
 
+os.environ["OMP_SCHEDULE"] = "static"
+config.schedule = 'static'
+runTest(config)
+
+os.environ["OMP_SCHEDULE"] = "guided"
+config.schedule = 'guided'
+runTest(config)
+
+os.environ["OMP_SCHEDULE"] = "auto"
+config.schedule = 'auto'
+runTest(config)
 
