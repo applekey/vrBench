@@ -2,39 +2,36 @@
 <pre><code>
 int main(int argc, char *argv[])
 {   
-
     omp_set_num_threads(atoi(argv[1]));
-    std::cerr<<"threads: "<<atoi(argv[1])<<std::endl;
+    std::cerr&#60&#60"threads: "&#60&#60atoi(argv[1])&#60&#60std::endl;
     
-    std::cerr<<"chunk: "<<atoi(argv[3])<<std::endl;
+    std::cerr&#60&#60"chunk: "&#60&#60atoi(argv[3])&#60&#60std::endl;
     switch(atoi(argv[2])) {
         case 1:
             omp_set_schedule(omp_sched_static, atoi(argv[3]));
-            std::cerr<<"omp_sched_static: "<<atoi(argv[2])<<std::endl;
+            std::cerr&#60&#60"omp_sched_static: "&#60&#60atoi(argv[2])&#60&#60std::endl;
             break;
         case 2:
             omp_set_schedule(omp_sched_auto, atoi(argv[3]));
-            std::cerr<<"omp_sched_auto: "<<atoi(argv[2])<<std::endl;
+            std::cerr&#60&#60"omp_sched_auto: "&#60&#60atoi(argv[2])&#60&#60std::endl;
             break;
         case 3:
             omp_set_schedule(omp_sched_dynamic, atoi(argv[3]));
-            std::cerr<<"omp_sched_dynamic: "<<atoi(argv[2])<<std::endl;
+            std::cerr&#60&#60"omp_sched_dynamic: "&#60&#60atoi(argv[2])&#60&#60std::endl;
             break;
         case 4:
             omp_set_schedule(omp_sched_guided, atoi(argv[3]));
-            std::cerr<<"omp_sched_guided: "<<atoi(argv[2])<<std::endl;
+            std::cerr&#60&#60"omp_sched_guided: "&#60&#60atoi(argv[2])&#60&#60std::endl;
             break;
         default:
             throw "invalid";
     }
-
     try
 
     { 
+    
 
 </code></pre>
-
-
 
 <h3>This is where you set the program name/ result csv </h3>
 
