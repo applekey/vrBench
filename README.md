@@ -24,3 +24,7 @@ config.fullPath = fullPath
 config.resultFile = fullPathResult
 #####################################################################################################
 </code></pre>
+
+
+enviornment vars here
+https://msdn.microsoft.com/en-us/library/wxdty0df.aspx
