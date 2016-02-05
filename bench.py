@@ -5,6 +5,7 @@ class vrconfig:
         self.dataset = ' '
         self.filter =' '
         self.schedule=' '
+        self.scheduleName= ''
         self.blocksize = 0
         self.dateTestRun = ' '
         self.iterations = 0
@@ -90,28 +91,28 @@ for i in range(1,16+1):
     config.cores = i
     config.schedule = 1
     config.programArgs = [str(config.cores),str(config.schedule),str(config.blocksize)]
-    config.schedule = 'static'
+    config.scheduleName = 'static'
     runTest(config)
 
 for i in range(1,16+1):
     config.cores = i
     config.schedule = 3
     config.programArgs = [str(config.cores),str(config.schedule),str(config.blocksize)]
-    config.schedule = 'dynamic'
+    config.scheduleName = 'dynamic'
     runTest(config)
 
 for i in range(1,16+1):
     config.cores = i
     config.schedule = 4
     config.programArgs = [str(config.cores),str(config.schedule),str(config.blocksize)]
-    config.schedule = 'guided'
+    config.scheduleName = 'guided'
     runTest(config)
 
 for i in range(1,16+1):
     config.cores = i
     config.schedule = 2
     config.programArgs = [str(config.cores),str(config.schedule),str(config.blocksize)]
-    config.schedule = 'auto'
+    config.scheduleName = 'auto'
     runTest(config)
 
 sys.exit() ## stop here
@@ -121,29 +122,29 @@ sys.exit() ## stop here
 config.cores = 16 ##use 16 threads
 
 blockStart = 0
-blockEnd = 10000
-stepSize = 1000
+blockEnd = 3000
+stepSize = 300
 
 curSize = blockStart
 while curSize<blockEnd:
     config.schedule = 1
     config.blocksize = str(curSize)
     config.programArgs = [str(config.cores),str(config.schedule),str(config.blocksize)]
-    config.schedule = 'static' + str(curSize)
+    config.scheduleName = 'static' + str(curSize)
     runTest(config)
 
     curSize += stepSize
 
 blockStart = 0
-blockEnd = 10000
-stepSize = 1000
+blockEnd = 3000
+stepSize = 300
 
 curSize = blockStart
 while curSize<blockEnd:
     config.schedule = 3
     config.blocksize = str(curSize)
     config.programArgs = [str(config.cores),str(config.schedule),str(config.blocksize)]
-    config.schedule = 'dynamic' + str(curSize)
+    config.scheduleName = 'dynamic' + str(curSize)
     runTest(config)
 
     curSize += stepSize
