@@ -1,26 +1,23 @@
-import subprocess,os
+import subprocess,os,io,csv,datetime
 
-def resultStruct:
+class vrconfig:
     def __init__(self):
-        ## need to fill these in
-        self.dataset = ''
-        self.filter =''
-        self.time = 0
-        self.schedule=''
+        self.dataset = ' '
+        self.filter =' '
+        self.schedule=' '
         self.blocksize = 0
-        self.dateTestRun = ''
-
-def config:
-    def __init__(self):
+        self.dateTestRun = ' '
         self.iterations = 0
-        self.filterStep = ''
-        self.programArgs
+        self.filterStep = ' '
+        self.programArgs=' '
+        self.resultFile = ' '
+        self.fullPath = ' '
 
-def runTest(fullPath,config):
+def runTest(config):
 
     totalRunTime = 0
     for i in range(config.iterations):  
-        runOutput = subprocess.check_output([fullPath, config.programArgs])
+        runOutput = subprocess.check_output([config.fullPath, config.programArgs])
         location = runOutput.find(config.filterStep)
 
         if location == -1:
@@ -28,10 +25,7 @@ def runTest(fullPath,config):
             raise
 
 
-        runOutput = runOutput[location:]
-
-        location = runOutput.find('RUNTIME: ')
-        runOutput = runOutput[location:]
+        runOutput = runOutput[location + len(config.filterStep):]
 
         ## now find the end, which is pass
         location = runOutput.find(' ')
@@ -40,18 +34,38 @@ def runTest(fullPath,config):
         totalRunTime +=runTime
 
     totalRunTime = totalRunTime/config.iterations
+    ##record the results
+    recordResult(config,totalRunTime)
 
         
 
-def recordResult(resultFile,resultstruct):
-    pass
+def recordResult(config,totalRunTime):
+    c = config
+    line = [c.dataset, c.iterations, c.schedule, c.blocksize, totalRunTime,c.dateTestRun,c.programArgs]
+    print line
+    with open(c.resultFile, 'a') as file:
+        ww = csv.writer(file, delimiter=',')
+        ww.writerow(line)
 
 
+#####################################################################################################
 vrPath = '/home/users/applekey/roba/eavl/EAVL-rayTracer/test'
 programName = 'testvolume'
+resultFile = 'result.csv'
 fullPath = os.path.join(vrPath,programName)
+fullPathResult = os.path.join(vrPath,resultFile)
 print fullPath
 
-programArgs = ''
+#####################################################################################################
+config = vrconfig()
+config.dataset = 'enzo'
+config.iterations = 2
+config.filterStep ='Sample      RUNTIME: '
+config.programArgs=' '
+config.dateTestRun = unicode(datetime.datetime.now().replace(microsecond=0))
+config.fullPath = fullPath
+config.resultFile = fullPathResult
+#####################################################################################################
+runTest(config)
 
 
