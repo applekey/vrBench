@@ -85,14 +85,29 @@ config.resultFile = fullPathResult
 
 ## try static different sizes
 blockStart = 0
-blockEnd = 1000
-stepSize = 100
+blockEnd = 10000
+stepSize = 1000
 
 curSize = blockStart
 while curSize<blockEnd:
 
-    os.environ["OMP_SCHEDULE"] = "static , " + str(curSize)
-    config.schedule = 'auto' + str(curSize)
+    config.programArgs = "OMP_SCHEDULE=static,"+str(curSize)
+    #os.environ["OMP_SCHEDULE"] = "static , " + str(curSize)
+    config.schedule = 'static' + str(curSize)
+    runTest(config)
+
+    curSize += stepSize
+
+blockStart = 0
+blockEnd = 10000
+stepSize = 1000
+
+curSize = blockStart
+while curSize<blockEnd:
+
+    config.programArgs = "OMP_SCHEDULE=dynamic,"+str(curSize)
+    #os.environ["OMP_SCHEDULE"] = "dynamic , " + str(curSize)
+    config.schedule = 'dynamic' + str(curSize)
     runTest(config)
 
     curSize += stepSize
